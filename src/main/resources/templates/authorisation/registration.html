@@ -17,13 +17,13 @@
     <span class="text-danger" th:text="${message}" style="margin-bottom: 15px; color: white; background: red;">Already exists</span>
 
     <div class="input-block">
-        <input type="text" placeholder="Enter Email" name="email" id="email" th:value="*{email}">
+        <input type="text" placeholder="Enter email" name="email" id="email" th:value="*{email}">
         <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
     </div>
 
     <div class="input-block">
-        <input type="text" placeholder="Enter username" name="username" id="username" th:value="*{username}">
-        <div class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+        <input type="text" placeholder="Enter nickname" name="nickname" id="nickname" th:value="*{nickname}">
+        <div class="text-danger" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}"></div>
     </div>
 
     <div class="input-block">

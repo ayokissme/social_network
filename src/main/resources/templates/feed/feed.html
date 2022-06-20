@@ -1,10 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
     <title>Feed</title>
 </head>
 <body>
+<div class="container">
+    <h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
+    <p th:text="${title}"></p>
 
+    <div sec:authorize="hasAuthority('USER')" style="color:blue;">Text visible to user.</div>
+    <div sec:authorize="hasAuthority('ADMIN')" style="color:red;">Text visible to admin.</div>
+
+    <div sec:authorize="isAuthenticated()">
+        Text visible only to authenticated users.
+        <p>Authenticated user roles: <span sec:authentication="principal.authorities"></span></p>
+        <p>Authenticated username: <span sec:authentication="name"></span></p>
+    </div>
+    <div sec:authorize="isAnonymous()" style="color:green;">Text visible only to not authenticated users.</div>
+</div>
 </body>
 </html>

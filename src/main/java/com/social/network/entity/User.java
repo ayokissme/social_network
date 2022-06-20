@@ -1,16 +1,21 @@
 package com.social.network.entity;
 
 import com.social.network.entity.enums.UserRole;
+import com.social.network.entity.enums.UserStatus;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
+import static com.social.network.entity.enums.UserStatus.ACTIVE;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.EAGER;
 
@@ -28,20 +33,25 @@ public class User implements UserDetails {
 
     @Column(name = "email")
     @NotBlank
+    @Email
     private String email;
 
-    @Column(name = "username")
+    @Column(name = "nickname")
     @NotBlank
-    private String username;
+    private String nickname;
 
     @Column(name = "password")
-    @Min(4)
+    @Size(min = 4)
     private String password;
 
     @ElementCollection(targetClass = UserRole.class, fetch = EAGER)
     @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(STRING)
     private Set<UserRole> roles;
+
+    @Enumerated(STRING)
+    @Column(name = "status")
+    private UserStatus status;
 
     @Override
     public String getUsername() {
@@ -65,7 +75,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return this.status == ACTIVE;
     }
 
     @Override
@@ -75,6 +85,19 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.status == ACTIVE;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
