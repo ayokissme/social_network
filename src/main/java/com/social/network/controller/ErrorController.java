@@ -6,12 +6,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class ErrorController {
 
-    @GetMapping("not-found")
+    @GetMapping("/not-found")
     public String notFound() {
         return "not found";
     }
 
-    @GetMapping("forbidden")
+    @GetMapping("/forbidden")
     public String forbidden() {
         return "forbidden";
     }

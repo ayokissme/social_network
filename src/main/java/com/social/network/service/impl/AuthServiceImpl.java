@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import static com.social.network.entity.enums.UserRole.USER;
@@ -40,17 +41,16 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void registerUser(User user) throws UserAlreadyExistsException {
-        if (userRepo.existsUserByEmail(user.getEmail())) {
-            throw new UserAlreadyExistsException("User with such mail already exists");
+        List<User> users = userRepo.findUsersByEmailOrNickname(user.getEmail(), user.getNickname());
+        if (users.size() != 0) {
+            throw new UserAlreadyExistsException(getExceptionMessage(users, user));
         }
+
         this.saveRegisteredUserToDB(user);
 
         String token = UUID.randomUUID().toString();
         TokenConfirm tokenConfirm = new TokenConfirm(
-                token,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(15),
-                user
+                token, LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), user
         );
 
         String confirmLink = "http://localhost:8081/registration/confirm?token=" + token;
@@ -84,6 +84,15 @@ public class AuthServiceImpl implements AuthService {
         userRepo.save(user);
 
         return "confirmed";
+    }
+
+    private String getExceptionMessage(List<User> users, User user) {
+        StringBuilder exMessage = new StringBuilder();
+        users.forEach(u -> {
+            if (u.getEmail().equals(user.getEmail())) exMessage.append("User with this email already exists. ");
+            if (u.getNickname().equals(user.getNickname())) exMessage.append("User with this nickname already exists");
+        });
+        return exMessage.toString();
     }
 
     private void saveRegisteredUserToDB(User user) {

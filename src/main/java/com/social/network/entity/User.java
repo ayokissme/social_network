@@ -2,17 +2,18 @@ package com.social.network.entity;
 
 import com.social.network.entity.enums.UserRole;
 import com.social.network.entity.enums.UserStatus;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.Set;
 
 import static com.social.network.entity.enums.UserStatus.ACTIVE;
@@ -36,7 +37,7 @@ public class User implements UserDetails {
     @Email
     private String email;
 
-    @Column(name = "nickname")
+    @Column(name = "nickname", unique = true)
     @NotBlank
     private String nickname;
 
@@ -86,18 +87,5 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return this.status == ACTIVE;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 }
